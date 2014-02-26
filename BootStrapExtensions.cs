@@ -7,6 +7,14 @@ namespace Common.Library.HtmlHelpers
 {
     public static class BootStrapExtensions
     {
+        
+        public enum ErrorMode
+        {
+            Alert,
+            ClosableAlert,
+            Panel,
+            Modal
+        }
 
 
         public class BootstrapValidationSummaryOptions
