@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
-namespace Common.Library.HtmlHelpers
+namespace BootstrapMvc.HtmlHelpers
 {
     public static class BootStrapExtensions
     {
