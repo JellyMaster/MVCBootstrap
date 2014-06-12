@@ -11,4 +11,9 @@ This currently is a project for MVC htmlHelpers
 
 Current release is purely for a validation Summary helper. 
 
+Next version due shortly will include the ability to indicate required fields and have a collapsable panel mode. 
+
+Thanks for taking the time to come and view this little pet project of mine. 
+
+
 
