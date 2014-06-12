@@ -15,5 +15,8 @@ Next version due shortly will include the ability to indicate required fields an
 
 Thanks for taking the time to come and view this little pet project of mine. 
 
+Check the wiki for a more detailed description on how to use this: 
+
+https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
 
 
