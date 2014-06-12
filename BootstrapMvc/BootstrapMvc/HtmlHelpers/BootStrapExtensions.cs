@@ -7,15 +7,14 @@ namespace BootstrapMvc.HtmlHelpers
 {
     public static class BootStrapExtensions
     {
-        
         public enum ErrorMode
         {
             Alert,
             ClosableAlert,
             Panel,
-            Modal
+            Modal,
+            CollapsePanel
         }
-
 
         public class BootstrapValidationSummaryOptions
         {
@@ -34,11 +33,17 @@ namespace BootstrapMvc.HtmlHelpers
 
             public ModalStyleSettings ModalDisplaySettings { get; set; }
 
+            public bool EnableRequiredFieldIndicators { get; set; }
+
+            public bool EnableRequiredFieldHelp { get; set; }
+
 
             public BootstrapValidationSummaryOptions(ErrorMode mode = ErrorMode.Alert,
                                                         bool showModelErrors = true,
-                                                        string title = "Opps! There seems to be a problem.",
+                                                        string title = "Oops! There seems to be a problem.",
                                                         string introductionBlock = "There seems to have been a problem with your request. See below: ",
+                                                        bool enableRequiredFieldIndicators = true,
+                                                        bool enableRequiredFieldHelp = true,
                                                         AlertStyleSettings alertStyleSettings = null,
                                                         PanelStyleSettings panelStyleSettings = null,
                                                         ModalStyleSettings modalStyleSettings = null)
@@ -47,14 +52,16 @@ namespace BootstrapMvc.HtmlHelpers
                 ShowModelErrors = showModelErrors;
                 Title = title;
                 IntroductionBlock = introductionBlock;
+                EnableRequiredFieldIndicators = enableRequiredFieldIndicators;
+                EnableRequiredFieldHelp = enableRequiredFieldHelp;
                 AlertDisplaySettings = (alertStyleSettings == null) ? new AlertStyleSettings() : alertStyleSettings;
                 PanelDisplaySettings = (panelStyleSettings == null) ? new PanelStyleSettings() : panelStyleSettings;
                 ModalDisplaySettings = (modalStyleSettings == null) ? new ModalStyleSettings() : modalStyleSettings;
 
+
             }
 
         }
-
 
         public class BaseStyleSettings
         {
@@ -112,8 +119,6 @@ namespace BootstrapMvc.HtmlHelpers
             }
         }
 
-
-
         public class AlertStyleSettings : BaseStyleSettings
         {
 
@@ -148,7 +153,6 @@ namespace BootstrapMvc.HtmlHelpers
             }
 
         }
-
 
         public class PanelStyleSettings : BaseStyleSettings
         {
@@ -222,12 +226,43 @@ namespace BootstrapMvc.HtmlHelpers
 
         }
 
-
-
-
         public static MvcHtmlString BootStrapValidationSummary(this HtmlHelper helper, BootstrapValidationSummaryOptions options = null)
         {
+            ///This is the full script for altering the labels on required fields. 
+            ///I have tweaked from original version to handle checkbox and text box validation. 
+            string requiredDecoratingScript = "<script>" +
+                                                "$(this).ready(function () {" +
+                                               "$('[data-val-required]').each(function () {" +
+                                               "var label = $(\"label[for='\" + $(this).attr('id') + \"']\");" +
+                                               "var isCheckbox = $(this).is(':checkbox');" +
 
+                                               "var isTextbox = $(this).is(':text');" +
+                                               "var isValidTextValue = true;" +
+                                               "if(isTextbox)" +
+                                               "{" +
+
+                                               "isValidTextValue = $(this).val() !== '';" +
+                                               "}" +
+                                               "label.removeClass(\"text-success\");" +
+                                               "label.removeClass(\"text-danger\");" +
+                                               "if ((" + ((helper.ViewData.ModelState.IsValid) ? "true" : "false") +
+                                               "|$(this).hasClass(\"input-validation-error\") | !isValidTextValue) " +
+                                               "&& !isCheckbox" +
+                                                ") {" +
+                                               "label.addClass(\"text-danger\");" +
+                                               "}" +
+                                               "else " +
+                                               "{" +
+                                               "if(!isCheckbox){" +
+                                               "label.addClass(\"text-success\");" +
+                                               "}" +
+                                               "}" +
+                                               "});" +
+                                               "}); " +
+                                               "</script>";
+
+            string requiredbox = "<div class=\"well well-sm\"><p>All labels like <strong class=\"text-danger\">this</strong> are required fields.</p>" +
+                                 "<p>All labels like <strong class=\"text-success\">this</strong> are valid required fields.</p></div>";
 
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -237,14 +272,30 @@ namespace BootstrapMvc.HtmlHelpers
             }
 
 
+            if (!options.EnableRequiredFieldHelp)
+            {
+                requiredbox = string.Empty;
+            }
 
+            if (!options.EnableRequiredFieldIndicators)
+            {
+                requiredDecoratingScript = string.Empty;
+            }
 
-            // first lets check to see if we have any errors in the system. 
+            //// first lets check to see if we have any errors in the system. 
             if (helper.ViewData.ModelState.IsValid)
             {
                 //we have a valid model lets not do anything. 
-                return new MvcHtmlString(string.Empty);
+                return new MvcHtmlString(requiredbox + requiredDecoratingScript);
             }
+
+
+            //To ensure compatability with JQuery Validate We need to wrap this up into a new validation div that will be hidden by default but will display once the system is launched 
+            //Need to see how I can do this is a nicer way without having to rewrite the entire helper. 
+
+            //  stringBuilder.AppendFormat( "<div class=\"{0}\" data-valmsg-summary=\"true\">", (helper.ViewData.ModelState.IsValid)? "validation-summary-valid":"validation-summary-errors"  ); 
+
+
 
 
 
@@ -270,6 +321,12 @@ namespace BootstrapMvc.HtmlHelpers
                         stringBuilder = PanelAlertMode(helper, options);
                         break;
                     }
+                case ErrorMode.CollapsePanel:
+                    {
+                        stringBuilder = CollapsePanelAlertMode(helper, options);
+                        break;
+                    }
+
                 default:
                     {
                         //default mode will be standard alert mode. 
@@ -280,12 +337,80 @@ namespace BootstrapMvc.HtmlHelpers
 
             }
 
+            // stringBuilder.AppendLine("</div>");
 
-            MvcHtmlString returnString = new MvcHtmlString(stringBuilder.ToString());
+            MvcHtmlString returnString = new MvcHtmlString(requiredbox + stringBuilder.ToString() + requiredDecoratingScript);
 
 
             return returnString;
         }
+
+        private static StringBuilder CollapsePanelAlertMode(HtmlHelper helper, BootstrapValidationSummaryOptions options)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            //add the main panel 
+            builder.AppendFormat("<div class=\"{0} {1}\" id=\"{2}\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass, "SummaryCollapsePanel");
+
+            //add the header 
+            builder.AppendFormat("<div class=\"{0}\">", options.PanelDisplaySettings.HeadingClass);
+            builder.AppendFormat("<div class=\"{0}\">", options.PanelDisplaySettings.TitleClass);
+            builder.AppendFormat("<a href=\"#{0}\" data-toggle=\"collapse\" data-parent=\"#{1}\">", "SummaryErrorBody", "SummaryCollapsePanel");
+            builder.AppendFormat("<h4>{0} <span id=\"Errorheader-icon\" class=\"pull-right glyphicon glyphicon-plus-sign\"></span> </h4>", options.Title);
+            builder.AppendFormat("</a>");
+            //close the header
+            builder.Append("</div>");
+            builder.Append("</div>");
+
+            //open the panel body 
+            builder.AppendFormat("<div class=\"{0}\" id=\"{1}\">", "panel-collapse collapse in", "SummaryErrorBody");
+
+
+            builder.Append(AddIntroductionText(options.IntroductionBlock, options.PanelDisplaySettings));
+
+            builder.Append(AddModelErrors(helper, options.ShowModelErrors, options.PanelDisplaySettings));
+
+
+
+            //close the panel body
+            builder.Append("</div>");
+
+
+            //close the panel 
+            builder.Append("</div>");
+
+
+            //now build in the collapse script 
+            builder.AppendFormat("<script>");
+
+            builder.Append("$(document).ready(function () {" +
+                                 " $(\"#SummaryCollapsePanel\").click(function () { " +
+                                           "var control = $(\"#Errorheader-icon\");" +
+                                           "if (control.hasClass(\"glyphicon-plus-sign\")) {" +
+                                           "control.removeClass(\"glyphicon-plus-sign\");" +
+                                           "control.removeClass(\"glyphicon\");" +
+                                           "control.addClass(\"glyphicon\");" +
+                                           "control.addClass(\"glyphicon-minus-sign\");" +
+                                           " } else {" +
+                                           "control.removeClass(\"glyphicon-minus-sign\");" +
+                                           "control.removeClass(\"glyphicon\");" +
+                                           "control.addClass(\"glyphicon\");" +
+                                           "control.addClass(\"glyphicon-plus-sign\");" +
+                                            "} " +
+                                    " });" +
+                                    "});"
+
+                                    );
+
+
+            //close the script tag 
+            builder.AppendFormat("</script>");
+
+
+            return builder;
+        }
+
+
 
         private static StringBuilder PanelAlertMode(HtmlHelper helper, BootstrapValidationSummaryOptions options)
         {
@@ -383,10 +508,6 @@ namespace BootstrapMvc.HtmlHelpers
             return builder;
         }
 
-
-
-
-
         private static StringBuilder AlertMode(this HtmlHelper helper, bool closable, BootstrapValidationSummaryOptions options)
         {
             //this is the standard alert mode box. 
@@ -446,12 +567,11 @@ namespace BootstrapMvc.HtmlHelpers
             return builder;
         }
 
-
         private static StringBuilder AddModelErrors(this HtmlHelper helper, bool showModelErrors, BaseStyleSettings style)
         {
             StringBuilder builder = new StringBuilder();
             bool alternativestyle = false;
-           
+
             if (showModelErrors && !helper.ViewData.ModelState.IsValid)
             {
                 builder.AppendFormat("<ul class=\"{0}\">", style.DefaultModelErrorGroupClass);
@@ -507,5 +627,8 @@ namespace BootstrapMvc.HtmlHelpers
             return builder;
 
         }
+
+
+
     }
 }
