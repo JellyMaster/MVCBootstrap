@@ -50,6 +50,9 @@
     <Content Include="Sample Images\image009.png" />
     <Content Include="Sample Images\image010.png" />
     <Content Include="Sample Images\image011.png" />
+    <Content Include="Sample Images\sample of main modes.png" />
+    <Content Include="Sample Images\sample showing modal window.png" />
+    <Content Include="Sample Images\sample showing required field indicators switched on.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
