@@ -237,8 +237,9 @@ namespace BootstrapMvc.HtmlHelpers
                                                "var isCheckbox = $(this).is(':checkbox');" +
 
                                                "var isTextbox = $(this).is(':text');" +
+                                               "var isPassword = $(this).is(':password');" +
                                                "var isValidTextValue = true;" +
-                                               "if(isTextbox)" +
+                                               "if(isTextbox || isPassword)" +
                                                "{" +
 
                                                "isValidTextValue = $(this).val() !== '';" +
@@ -283,11 +284,11 @@ namespace BootstrapMvc.HtmlHelpers
             }
 
             //// first lets check to see if we have any errors in the system. 
-            if (helper.ViewData.ModelState.IsValid)
-            {
-                //we have a valid model lets not do anything. 
-                return new MvcHtmlString(requiredbox + requiredDecoratingScript);
-            }
+            //if (helper.ViewData.ModelState.IsValid)
+            //{
+            //    //we have a valid model lets not do anything. 
+            //    return new MvcHtmlString(requiredbox + requiredDecoratingScript);
+            //}
 
 
             //To ensure compatability with JQuery Validate We need to wrap this up into a new validation div that will be hidden by default but will display once the system is launched 
@@ -350,7 +351,7 @@ namespace BootstrapMvc.HtmlHelpers
             StringBuilder builder = new StringBuilder();
 
             //add the main panel 
-            builder.AppendFormat("<div class=\"{0} {1}\" id=\"{2}\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass, "SummaryCollapsePanel");
+            builder.AppendFormat("<div class=\"{0} {1} {2}\" id=\"{3}\" data-valmsg-summary=\"true\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass,(helper.ViewData.ModelState.IsValid)? "validation-summary-valid":"validation-summary-errors", "SummaryCollapsePanel");
 
             //add the header 
             builder.AppendFormat("<div class=\"{0}\">", options.PanelDisplaySettings.HeadingClass);
@@ -417,7 +418,7 @@ namespace BootstrapMvc.HtmlHelpers
             StringBuilder builder = new StringBuilder();
 
             //add the main panel 
-            builder.AppendFormat("<div class=\"{0} {1}\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass);
+            builder.AppendFormat("<div class=\"{0} {1} {2}\" data-valmsg-summary=\"true\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass, (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors");
 
             //add the header 
             builder.AppendFormat("<div class=\"{0}\">", options.PanelDisplaySettings.HeadingClass);
@@ -456,9 +457,10 @@ namespace BootstrapMvc.HtmlHelpers
 
 
             //open up the modal window 
-            builder.AppendFormat("<div class=\"{0} {1} \" id=\"SummaryErrors\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"SummaryErrorLabel\" aria-hidden=\"true\">",
+            builder.AppendFormat("<div class=\"{0} {1} {2} \" data-valmsg-summary=\"true\" id=\"SummaryErrors\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"SummaryErrorLabel\" aria-hidden=\"true\">",
                                     options.ModalDisplaySettings.ContainerClass,
-                                    options.ModalDisplaySettings.ContainerEmphasisClass);
+                                    options.ModalDisplaySettings.ContainerEmphasisClass,
+                                    (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors");
 
             //add the dialog
             builder.AppendFormat("<div class=\"{0}\">", options.ModalDisplaySettings.ModalDialogClass);
@@ -515,16 +517,17 @@ namespace BootstrapMvc.HtmlHelpers
 
             if (closable)
             {
-                builder.AppendFormat("<div class=\"{0} {1} {2}\">", options.AlertDisplaySettings.ContainerClass,
+                builder.AppendFormat("<div class=\"{0} {1} {2} {3}\" data-valmsg-summary=\"true\">", options.AlertDisplaySettings.ContainerClass,
                                                                     options.AlertDisplaySettings.ContainerEmphasisClass,
-                                                                    options.AlertDisplaySettings.ContainerDismissibleClass);
+                                                                    options.AlertDisplaySettings.ContainerDismissibleClass,
+                                                                    (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors");
                 builder.AppendFormat("<button type=\"{0}\" class=\"{1}\" data-dismiss=\"{2}\" aria-hidden=\"{3}\">&times;</button>",
                     "button", options.AlertDisplaySettings.CloseButtonClass, "alert", "true");
 
             }
             else
             {
-                builder.AppendFormat("<div class=\"{0} {1} \">", "alert", "alert-danger");
+                builder.AppendFormat("<div class=\"{0} {1} {2} \" data-valmsg-summary=\"true\">", options.AlertDisplaySettings.ContainerClass, options.AlertDisplaySettings.ContainerEmphasisClass, (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors");
 
             }
 
@@ -583,7 +586,7 @@ namespace BootstrapMvc.HtmlHelpers
 
                         foreach (ModelError error in helper.ViewData.ModelState[key].Errors)
                         {
-                            builder.AppendFormat("<li class=\"{0} {1}\">{2}</li>", style.DefaultModelErrorBaseItemClass, alternativestyle ? style.DefaultModelErrorItemClass : style.DefaultModelErrorItemAltClass, error.ErrorMessage);
+                            builder.AppendFormat("<li class=\"{0} {1}\">{2}</li>", style.DefaultModelErrorBaseItemClass, alternativestyle ? style.DefaultModelErrorItemClass : style.DefaultModelErrorItemAltClass, !string.IsNullOrWhiteSpace(error.ErrorMessage) ? error.ErrorMessage : error.Exception.Message);
                             alternativestyle = !alternativestyle;
                         }
                     }
@@ -619,6 +622,14 @@ namespace BootstrapMvc.HtmlHelpers
                 }
 
 
+            }
+            else
+            {
+               if( helper.ViewData.ModelState.IsValid)
+               {
+                   builder.AppendFormat("<ul class=\"{0}\">", style.DefaultModelErrorGroupClass);
+                   builder.Append("</ul>");
+               }
             }
 
 
