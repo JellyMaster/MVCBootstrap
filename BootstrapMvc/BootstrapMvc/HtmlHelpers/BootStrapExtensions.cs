@@ -314,7 +314,10 @@ namespace BootstrapMvc.HtmlHelpers
                     }
                 case ErrorMode.Modal:
                     {
-                        stringBuilder = ModalAlertMode(helper, options);
+                        if (!helper.ViewData.ModelState.IsValid)
+                        {
+                            stringBuilder = ModalAlertMode(helper, options);
+                        }
                         break;
                     }
                 case ErrorMode.Panel:
@@ -351,7 +354,7 @@ namespace BootstrapMvc.HtmlHelpers
             StringBuilder builder = new StringBuilder();
 
             //add the main panel 
-            builder.AppendFormat("<div class=\"{0} {1} {2}\" id=\"{3}\" data-valmsg-summary=\"true\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass,(helper.ViewData.ModelState.IsValid)? "validation-summary-valid":"validation-summary-errors", "SummaryCollapsePanel");
+            builder.AppendFormat("<div class=\"{0} {1} {2}\" id=\"{3}\" data-valmsg-summary=\"true\">", options.PanelDisplaySettings.ContainerClass, options.PanelDisplaySettings.ContainerEmphasisClass, (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors", "SummaryCollapsePanel");
 
             //add the header 
             builder.AppendFormat("<div class=\"{0}\">", options.PanelDisplaySettings.HeadingClass);
@@ -457,10 +460,10 @@ namespace BootstrapMvc.HtmlHelpers
 
 
             //open up the modal window 
-            builder.AppendFormat("<div class=\"{0} {1} {2} \" data-valmsg-summary=\"true\" id=\"SummaryErrors\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"SummaryErrorLabel\" aria-hidden=\"true\">",
+            builder.AppendFormat("<div class=\"{0} {1}  \"  id=\"SummaryErrors\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"SummaryErrorLabel\" aria-hidden=\"true\">",
                                     options.ModalDisplaySettings.ContainerClass,
-                                    options.ModalDisplaySettings.ContainerEmphasisClass,
-                                    (helper.ViewData.ModelState.IsValid) ? "validation-summary-valid" : "validation-summary-errors");
+                                    options.ModalDisplaySettings.ContainerEmphasisClass
+                                    );
 
             //add the dialog
             builder.AppendFormat("<div class=\"{0}\">", options.ModalDisplaySettings.ModalDialogClass);
@@ -625,11 +628,11 @@ namespace BootstrapMvc.HtmlHelpers
             }
             else
             {
-               if( helper.ViewData.ModelState.IsValid)
-               {
-                   builder.AppendFormat("<ul class=\"{0}\">", style.DefaultModelErrorGroupClass);
-                   builder.Append("</ul>");
-               }
+                if (helper.ViewData.ModelState.IsValid)
+                {
+                    builder.AppendFormat("<ul class=\"{0}\">", style.DefaultModelErrorGroupClass);
+                    builder.Append("</ul>");
+                }
             }
 
 
