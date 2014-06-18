@@ -6,7 +6,7 @@ MVCBootstrap
 
 This is a simple project that provides an alternative replace to the the default MVC validation summary html helper. 
 
-I was not happy with it's lack of keep in the modern world and as a big fan of using Twitter's Bootstrap framework I wanted something more in keeping with it. 
+I was not happy with it's lack of styling and customization in the modern world and as a big fan of using Twitter's Bootstrap framework I wanted something more in keeping with it. 
 
 In addition I missed some of the controls that I had from asp.net webforms and included a simple visual "required fields indicator"
 
