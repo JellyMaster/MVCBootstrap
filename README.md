@@ -58,7 +58,7 @@ Samples of the various modes available currently:
 
 For full details go to the project wiki below: 
 
-     https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
+https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
      
 
 To customise the summary panel we pass in a new BootstrapValidationSummaryOptions() object. 
@@ -102,6 +102,6 @@ This allows you to pass in the various settings to enable/disable features as we
 
 For further details check the wiki. 
 
-    https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
+https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
 
 Thanks for taking the time to have a look at this project and if you have any suggestions on improvements/bugs feel free to let me know. 
