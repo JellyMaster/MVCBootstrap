@@ -24,7 +24,8 @@ Step 1) Download the source code from here or install from nuget (search for Boo
       Install-Package BootstrapMvc 
       
 Step 2) Add the following declaration to your views\webconfig file under pages: 
-
+ (Version 1.0.0.4 has a webconfig transform for this but if you are using areas you will need add this change manually)
+ 
      <system.web.webPages.razor>
     <host factoryType="System.Web.Mvc.MvcWebRazorHostFactory, System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
     <pages pageBaseType="System.Web.Mvc.WebViewPage">
