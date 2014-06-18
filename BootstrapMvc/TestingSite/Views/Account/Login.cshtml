@@ -6,14 +6,80 @@
 
 <h2>@ViewBag.Title.</h2>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <section id="loginForm">
             @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
                 @Html.AntiForgeryToken()
                 <h4>Use a local account to log in.</h4>
                 <hr />
-                @Html.BootStrapValidationSummary()
+                <div class="row">
+                    <div class="col-lg-4">
+
+                        <div class="help-block">
+                            Alert box
+
+                        </div>
+                        @Html.BootStrapValidationSummary(new BootStrapExtensions.BootstrapValidationSummaryOptions()
+          {
+              DisplayMode = BootStrapExtensions.ErrorMode.Alert
+
+          })
+
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="help-block">
+                            Closable Alert box 
+
+                        </div>
+                        @Html.BootStrapValidationSummary(new BootStrapExtensions.BootstrapValidationSummaryOptions()
+{
+    DisplayMode = BootStrapExtensions.ErrorMode.ClosableAlert
+
+})
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="help-block">
+                            Panel
+
+                        </div>
+                        @Html.BootStrapValidationSummary(new BootStrapExtensions.BootstrapValidationSummaryOptions()
+{
+    DisplayMode = BootStrapExtensions.ErrorMode.Panel
+
+})
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="help-block">
+                            Collapsable Panel
+
+                        </div>
+                        @Html.BootStrapValidationSummary(new BootStrapExtensions.BootstrapValidationSummaryOptions()
+{
+    DisplayMode = BootStrapExtensions.ErrorMode.CollapsePanel
+
+})
+
+                    </div>
+                </div>
+
+
+    @Html.BootStrapValidationSummary(new BootStrapExtensions.BootstrapValidationSummaryOptions()
+{
+    DisplayMode = BootStrapExtensions.ErrorMode.Modal
+
+})
+
+
+                @Html.ValidationSummary()
+
+
+
+
                 <div class="form-group">
                     @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
@@ -47,11 +113,11 @@
             }
         </section>
     </div>
-    <div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new { Action = "ExternalLogin", ReturnUrl = ViewBag.ReturnUrl })
-        </section>
-    </div>
+    @*<div class="col-md-4">
+            <section id="socialLoginForm">
+                @Html.Partial("_ExternalLoginsListPartial", new { Action = "ExternalLogin", ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </div>*@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
