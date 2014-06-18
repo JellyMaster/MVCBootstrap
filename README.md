@@ -19,7 +19,7 @@ Ensure you have bootstrap version 3 and jquery setup within your project before 
 
 Well it's pretty simple: 
 
-Step 1) Download the source code from here or install from nuget (search for BootstrapMvc via: 
+Step 1) Download the source code from here or install from nuget (search for BootstrapMvc via nuget) 
 
       Install-Package BootstrapMvc 
       
