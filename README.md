@@ -14,6 +14,7 @@ With that in mind here is my little pet project which replaces the default contr
 
 <h2>Before you start</h2>
 Ensure you have bootstrap version 3 and jquery setup within your project before you use this. 
+Also make sure that you have jquery loaded on the page before this is called. Due to using JQuery a lot in this control a javascript error will fire up if it is loaded at the bottom. This is scheduled as part of an update in the future to pull out all the javascript into a separate file and get this called in. 
 
 <h2>How to get it working?</h2>
 
