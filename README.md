@@ -106,4 +106,10 @@ For further details check the wiki.
 
 https://github.com/JellyMaster/MVCBootstrap/wiki/BootStrapped-Validation-Summary
 
+<h2>So what's next?</h2>
+
+Well a feature I am still looking at is unobtrusive support and this is something that will hopefully give you the same level of customization as this control. It also gives me the perfect chance to pull out all the jquery that I have stuffed in the helper and maintain it in a more sensible way. 
+
+
+
 Thanks for taking the time to have a look at this project and if you have any suggestions on improvements/bugs feel free to let me know. 
