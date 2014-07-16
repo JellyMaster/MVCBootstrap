@@ -73,8 +73,8 @@ This allows you to pass in the various settings to enable/disable features as we
      bool showModelErrors = true,
      string title = "Oops! There seems to be a problem.",
      string introductionBlock = "There seems to have been a problem with your request. See below: ",
-     bool enableRequiredFieldIndicators = true,
-     bool enableRequiredFieldHelp = true,
+     bool enableRequiredFieldIndicators = false,
+     bool enableRequiredFieldHelp = false,
      AlertStyleSettings alertStyleSettings = null,
      PanelStyleSettings panelStyleSettings = null,
      ModalStyleSettings modalStyleSettings = null)
